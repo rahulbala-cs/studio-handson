@@ -281,12 +281,12 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
       },
       href: {
         type: 'href',
-        displayName: 'Link', // changed from "Href"
+        displayName: 'Href',
         defaultValue: '/',
       },
       variant: {
         type: 'choice',
-        displayName: 'Style', // changed from "Variant"
+        displayName: 'Variant',
         options: [
           { label: 'Primary', value: 'primary' },
           { label: 'Secondary', value: 'secondary' },
@@ -331,17 +331,17 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     props: {
       src: {
         type: 'imageurl',
-        displayName: 'Image', // changed from "Src"
+        displayName: 'Src',
         defaultValue: '',
       },
       alt: {
         type: 'string',
-        displayName: 'Alt text', // changed from "Alt"
+        displayName: 'Alt',
         defaultValue: '',
       },
       ratio: {
         type: 'choice',
-        displayName: 'Shape', // changed from "Ratio"
+        displayName: 'Ratio',
         options: [
           { label: 'Auto', value: 'auto' },
           { label: 'Landscape', value: 'landscape' },
@@ -366,7 +366,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
       },
       variant: {
         type: 'choice',
-        displayName: 'Style', // changed from "Variant"
+        displayName: 'Variant',
         options: [
           { label: 'Body', value: 'body' },
           { label: 'Lead', value: 'lead' },
@@ -390,7 +390,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     props: {
       children: {
         type: 'slot',
-        displayName: 'Content', // changed from "Children"
+        displayName: 'Children',
       },
       tone: {
         type: 'choice',
@@ -414,7 +414,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
       },
       spacing: {
         type: 'choice',
-        displayName: 'Vertical space', // changed from "Spacing"
+        displayName: 'Spacing',
         options: [
           { label: 'Compact', value: 'compact' },
           { label: 'Normal', value: 'normal' },
@@ -439,7 +439,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     props: {
       children: {
         type: 'slot',
-        displayName: 'Items', // changed from "Children"
+        displayName: 'Children',
       },
       direction: {
         type: 'choice',
