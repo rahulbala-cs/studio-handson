@@ -225,6 +225,6 @@ if (home === 200) {
 console.log(
   failures
     ? `\n\x1b[31m\x1b[1m${failures} to fix.\x1b[0m Fix the red lines above, then run npm run doctor again.\n`
-    : '\n\x1b[32m\x1b[1mAll green.\x1b[0m Post a screenshot in the Slack channel. You are ready.\n',
+    : '\n\x1b[32m\x1b[1mAll green.\x1b[0m You are ready.\n',
 );
 process.exit(failures ? 1 : 0);
