@@ -1,0 +1,434 @@
+/*
+ * One stylesheet: tokens first, then one block per registered component.
+ *
+ * Components are styled by their own class names (`.stack--card`, `.badge`),
+ * never by where they sit on a page. That is what lets a compound (Hero,
+ * Destination Cards) and the same thing assembled from atoms in Studio look
+ * identical: they produce the same markup, so the same rules apply.
+ *
+ * Rules an author may override per breakpoint in Studio (Session 2's design
+ * props: text alignment, split columns) are wrapped in :where(), which gives
+ * them no specificity, so the class Studio generates always wins.
+ *
+ * Type: Schibsted Grotesk for names, facts and navigation; Source Serif 4 for
+ * writing people read (taglines, intros, trip descriptions).
+ * Colour: teal does the work (buttons, facts), sand marks the hero, terracotta
+ * is kept to link underlines.
+ */
+
+:root {
+  --ink: #1d2b2a;
+  --ink-soft: #4d5a58;
+  --white: #ffffff;
+  --paper: #fbf8f3;
+  --sand: #f1ece3;
+  --teal: #1f5c5a;
+  --teal-dark: #164341;
+  --accent: #c2562e;
+  --line: #e3ddd2;
+  --radius: 6px;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+/* ── Container (layout) ───────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.container--light {
+  background: var(--white);
+}
+.container--sand {
+  background: var(--sand);
+}
+.container--teal {
+  background: var(--teal);
+  color: var(--paper);
+}
+.container--space-compact {
+  padding-block: 1rem;
+}
+.container--space-normal {
+  padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+}
+.container--space-spacious {
+  padding-block: clamp(3.5rem, 2rem + 6vw, 7rem);
+}
+.container__inner {
+  margin-inline: auto;
+  width: 100%;
+}
+.container__inner--narrow {
+  max-width: 42rem;
+}
+.container__inner--normal {
+  max-width: 64rem;
+}
+.container__inner--wide {
+  max-width: 76rem;
+}
+/* A band's top-level Stack spans the band. */
+.container__inner > .stack {
+  width: 100%;
+}
+
+/* ── Stack (layout) ───────────────────────────────────────────────────────── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.stack--gap-none {
+  gap: 0;
+}
+.stack--gap-small {
+  gap: 0.5rem;
+}
+.stack--gap-medium {
+  gap: 1.25rem;
+}
+.stack--gap-large {
+  gap: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
+}
+.stack--pad-small {
+  padding: 0.75rem;
+}
+.stack--pad-medium {
+  padding: 1.25rem;
+}
+.stack--pad-large {
+  padding: 2rem;
+}
+
+/* vertical: Align lines items up across the column. */
+.stack--vertical.stack--align-start {
+  align-items: flex-start;
+}
+.stack--vertical.stack--align-center {
+  align-items: center;
+  text-align: center;
+}
+.stack--vertical.stack--align-end {
+  align-items: flex-end;
+  text-align: end;
+}
+.stack--vertical.stack--align-stretch {
+  align-items: stretch;
+}
+.stack--vertical.stack--align-between {
+  justify-content: space-between;
+}
+/* A Stack inside a vertical Stack always spans it, so its own Align has room.
+   So does a heading, so a text alignment set in Studio has room to show. */
+.stack--vertical > :is(.stack, .heading) {
+  align-self: stretch;
+}
+
+/* horizontal: side by side, wrapping on small screens. Align spreads the row. */
+.stack--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.stack--horizontal.stack--align-center {
+  justify-content: center;
+}
+.stack--horizontal.stack--align-end {
+  justify-content: flex-end;
+}
+.stack--horizontal.stack--align-between {
+  justify-content: space-between;
+}
+.stack--horizontal.stack--align-stretch > * {
+  flex: 1 1 0;
+}
+
+/* split: two columns, the first a little wider.
+   grid: as many columns as fit at a comfortable photo size. */
+.stack--split,
+.stack--grid {
+  display: grid;
+}
+:where(.stack--split) {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+}
+:where(.stack--grid) {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+.stack--split.stack--align-start,
+.stack--grid.stack--align-start {
+  align-items: start;
+}
+.stack--split.stack--align-center,
+.stack--grid.stack--align-center {
+  align-items: center;
+}
+.stack--split.stack--align-end,
+.stack--grid.stack--align-end {
+  align-items: end;
+}
+
+/* surface: card. A photo with its details underneath; no box around it.
+   Both versions of the Destination Card use it. */
+.stack--card {
+  height: 100%;
+  color: var(--ink);
+}
+/* The details grow, so the price rows of a grid row line up at the bottom. */
+.stack--card > .stack {
+  flex: 1 1 auto;
+}
+.stack--card > .stack > .stack--horizontal:last-child {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+/* ── Heading (atom) ───────────────────────────────────────────────────────── */
+.heading {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.heading--h1 {
+  font-size: clamp(2.75rem, 1.6rem + 3.8vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+.heading--h2 {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 2.75rem);
+  letter-spacing: -0.03em;
+}
+.heading--h3 {
+  font-size: 1.5rem;
+}
+.heading--h4 {
+  font-size: 1.125rem;
+}
+
+/* ── Text (atom) ──────────────────────────────────────────────────────────── */
+.text {
+  margin: 0;
+  max-width: 38rem;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+.text--lead {
+  font-size: clamp(1.2rem, 1.05rem + 0.5vw, 1.4rem);
+  line-height: 1.45;
+  color: var(--ink);
+}
+/* Small and strong are facts, not prose: set in the grotesk. */
+.text--small,
+.text--strong {
+  font-family: var(--font-sans);
+}
+.text--small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.text--strong {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Image (atom) ─────────────────────────────────────────────────────────── */
+.img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+.img--landscape {
+  aspect-ratio: 3 / 2;
+}
+.img--square {
+  aspect-ratio: 1;
+}
+.img--wide {
+  aspect-ratio: 16 / 7;
+}
+.img--empty {
+  min-height: 8rem;
+  background: repeating-linear-gradient(-45deg, var(--sand) 0 10px, var(--white) 10px 20px);
+  border: 1px dashed var(--line);
+}
+
+/* ── Badge (atom) ─────────────────────────────────────────────────────────── */
+/* A short fact set in colour: "8 days", "Booking now for 2027". */
+.badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.badge--accent {
+  color: var(--teal);
+}
+.badge--neutral {
+  color: var(--ink-soft);
+}
+.badge--dark {
+  color: var(--ink);
+}
+.badge--sale {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--white);
+  font-size: 0.8125rem;
+}
+
+/* ── Button (atom) ────────────────────────────────────────────────────────── */
+.button {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.button--primary,
+.button--secondary {
+  padding: 0.85rem 1.35rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.button--primary {
+  background: var(--teal);
+  color: var(--white);
+}
+.button--primary:hover {
+  background: var(--teal-dark);
+}
+.button--secondary {
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  color: var(--ink);
+}
+.button--secondary:hover {
+  color: var(--teal);
+}
+.button--link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.3em;
+}
+.button--link:hover {
+  color: var(--teal);
+}
+
+/* ── Header and Footer (compounds) ────────────────────────────────────────── */
+.site-header {
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: inherit;
+  text-decoration: none;
+}
+.brand__logo.img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
+.brand__name {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.menu-link {
+  font-weight: 500;
+  text-decoration: none;
+}
+.container--teal :is(.text, .menu-link, .menu-link:hover) {
+  color: var(--paper);
+}
+.site-footer .text--small {
+  opacity: 0.75;
+}
+
+/* ── Hero (compound) ──────────────────────────────────────────────────────── */
+/* The compound decides in CODE that its columns stack on a phone. The Hero
+   rebuilt from atoms in Session 2 leaves that to the author, per breakpoint. */
+@media (max-width: 760px) {
+  .hero__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Carousel (compound) ──────────────────────────────────────────────────── */
+.carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(85%, 34rem);
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.75rem;
+}
+.carousel__slide {
+  margin: 0;
+  scroll-snap-align: start;
+}
+.carousel__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+/* ── Section notes ────────────────────────────────────────────────────────── */
+/* The short line beside a section heading. */
+.section-note {
+  max-width: 24rem;
+}
+
+/* ── Empty atoms ──────────────────────────────────────────────────────────── */
+/* Visitors never see an atom whose field is empty… */
+html:not(.cs-studio-canvas) :is(.heading, .text, .badge, .button):empty,
+html:not(.cs-studio-canvas) .img--empty {
+  display: none;
+}
+/* …while inside Studio it stays visible, so it can be selected and filled in. */
+html.cs-studio-canvas :is(.heading, .text, .badge, .button):empty {
+  min-width: 4rem;
+  min-height: 1.5em;
+  outline: 1px dashed var(--line);
+}

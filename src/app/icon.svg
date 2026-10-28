@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Wayfarer">
+  <circle cx="32" cy="32" r="30" fill="#1F5C5A"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#FBF8F3" stroke-width="2" opacity="0.5"/>
+  <path d="M32 10 L38 32 L32 54 L26 32 Z" fill="#FBF8F3"/>
+  <path d="M32 10 L38 32 L26 32 Z" fill="#C2562E"/>
+  <circle cx="32" cy="32" r="3" fill="#1F5C5A"/>
+</svg>

@@ -1,0 +1,37 @@
+{
+  "name": "studio-handson-boilerplate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Wayfarer: the Contentstack Studio hands-on site. Next.js, four content types, a handful of components; Studio takes over the layout in Session 1.",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit",
+    "setup": "node scripts/setup.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "catchup": "node scripts/catchup.mjs",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@contentstack/delivery-sdk": "5.6.1",
+    "@contentstack/live-preview-utils": "4.5.3",
+    "@contentstack/studio-client": "4.1.0",
+    "@contentstack/studio-core": "1.4.4",
+    "@contentstack/studio-react": "2.0.1",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}

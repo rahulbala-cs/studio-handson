@@ -1,0 +1,23 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store
+certificates/
+scripts/.provision-state.json
+logs/
+.playwright-mcp/
+
+# Internal: facilitator material, not for attendees
+studio docs skill/
+HANDSON-PLAN.md
+guide-drafts/
+
+.checkpoints/
+.playwright-mcp/
+
+# Claude Code's local session files
+.claude/
