@@ -30,6 +30,11 @@ export interface StackProps {
   surface?: StackSurface;
   /** Space inside the edges. */
   padding?: StackSpace;
+  /**
+   * Design prop, for Split and Grid: the column layout, per breakpoint. Studio
+   * passes a class name that sets grid-template-columns.
+   */
+  gridTemplateColumns?: string;
   className?: string;
 }
 
@@ -40,6 +45,7 @@ export default function Stack({
   align = 'start',
   surface = 'none',
   padding = 'none',
+  gridTemplateColumns,
   className,
   studioAttributes,
 }: StackProps & StudioAttributes) {
@@ -52,6 +58,7 @@ export default function Stack({
         `stack--align-${align}`,
         surface === 'card' && 'stack--card',
         padding !== 'none' && `stack--pad-${padding}`,
+        gridTemplateColumns,
         className,
       )}
       {...studioAttributes}

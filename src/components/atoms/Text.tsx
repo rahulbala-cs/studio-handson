@@ -9,19 +9,22 @@ export interface TextProps {
   text?: string | null;
   /** body: normal prose · lead: a larger intro · small: fine print · strong: a fact, such as a price. */
   variant?: TextVariant;
+  /** Design prop: Studio passes a class name that sets text-align per breakpoint. */
+  textAlign?: string;
   className?: string;
 }
 
 export default function Text({
   text,
   variant = 'body',
+  textAlign,
   className,
   studioAttributes,
 }: TextProps & StudioAttributes) {
   // Empty field, nothing drawn: a Section reused where this field is missing leaves no gap.
   if (!text) return null;
   return (
-    <p className={cx('text', `text--${variant}`, className)} {...studioAttributes}>
+    <p className={cx('text', `text--${variant}`, textAlign, className)} {...studioAttributes}>
       {text}
     </p>
   );

@@ -9,18 +9,21 @@ export interface HeadingProps {
   text?: string | null;
   /** h1 is the page title; h2 a section title; h3/h4 smaller titles. */
   level?: HeadingLevel;
+  /** Design prop: Studio passes a class name that sets text-align per breakpoint. */
+  textAlign?: string;
   className?: string;
 }
 
 export default function Heading({
   text,
   level = 'h2',
+  textAlign,
   className,
   studioAttributes,
 }: HeadingProps & StudioAttributes) {
   const Tag = level;
   return (
-    <Tag className={cx('heading', `heading--${level}`, className)} {...studioAttributes}>
+    <Tag className={cx('heading', `heading--${level}`, textAlign, className)} {...studioAttributes}>
       {text}
     </Tag>
   );
