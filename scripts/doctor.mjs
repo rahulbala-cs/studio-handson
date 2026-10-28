@@ -202,19 +202,18 @@ if (apiKey && env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN) {
 // ─── 6. The site ─────────────────────────────────────────────────────────────
 section('The site on your laptop');
 const home = await status(`${BASE_URL}/`);
-if (home === 200) ok(`${BASE_URL} answers`);
-else if (home === 0)
+const kyoto = await status(`${BASE_URL}/destinations/kyoto`);
+// A 404 is normal while a page has no template yet; anything else is a real error.
+const page = (label, code, until) => {
+  if (code === 200) ok(`${label} answers`);
+  else if (code === 404) info(`${label} answered 404`, `expected until ${until}`);
+  else fail(`${label} answered ${code}`, 'Look at the npm run dev terminal for the error.');
+};
+if (home === 0) {
   fail(`${BASE_URL} doesn't answer`, 'Start it in another terminal: npm run dev');
-else fail(`${BASE_URL} answered ${home}`, 'Look at the npm run dev terminal for the error.');
-
-if (home === 200) {
-  const kyoto = await status(`${BASE_URL}/destinations/kyoto`);
-  if (kyoto === 200) ok('/destinations/kyoto answers');
-  else
-    info(
-      `/destinations/kyoto answered ${kyoto}`,
-      'expected until the Destination template is deployed',
-    );
+} else {
+  page(BASE_URL, home, 'the Home template is deployed (Session 2)');
+  page('/destinations/kyoto', kyoto, 'the Destination template is deployed (Session 1)');
   if (fs.existsSync(path.join(ROOT, 'src/app/canvas/page.tsx'))) {
     const canvas = await status(`${BASE_URL}/canvas`);
     if (canvas === 200) ok('/canvas answers', 'Studio can load your canvas');
