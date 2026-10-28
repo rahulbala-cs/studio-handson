@@ -29,8 +29,8 @@ import { stage4 } from './lib/stages/s4.mjs';
 
 const RESULTS = {
   2: { label: 'Session 1', steps: stage1, freeform: false, branch: 'session-2-start' },
-  3: { label: 'Session 2', steps: stage2, freeform: true, branch: 'session-3-start' },
-  4: { label: 'Session 3', steps: stage3, freeform: true, branch: 'session-4-start' },
+  3: { label: 'Session 2', steps: stage2, freeform: false, branch: 'session-3-start' },
+  4: { label: 'Session 3', steps: stage3, freeform: false, branch: 'session-4-start' },
   final: { label: 'Session 4', steps: stage4, freeform: true, branch: 'final' },
 };
 
@@ -116,7 +116,7 @@ run(async () => {
 
   // Session 2 sends the breakpoints to the project with the CLI; do the same.
   const breakpoints = 'src/studio/breakpoints.ts';
-  if (result.freeform && fs.existsSync(path.join(ROOT, breakpoints))) {
+  if (target !== '2' && fs.existsSync(path.join(ROOT, breakpoints))) {
     log.step('Breakpoints');
     const csdx = (...a) =>
       spawnSync('csdx', a, { stdio: 'inherit', shell: process.platform === 'win32' }).status === 0;
