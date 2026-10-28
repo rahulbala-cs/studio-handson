@@ -62,7 +62,7 @@ export const compoundHero = (sv, P) =>
       image: bound('imageurl', 'image.url'),
       imageAlt: bound('string', 'image_alt'),
       ctaLabel: lit(sv, nid(P, 'hero'), 'ctaLabel', 'string', 'Enquire about this trip'),
-      ctaUrl: lit(sv, nid(P, 'hero'), 'ctaUrl', 'href', 'mailto:hello@wayfarer.example'),
+      ctaUrl: lit(sv, nid(P, 'hero'), 'ctaUrl', 'href', 'https://wayfarer.example/enquire'),
     },
   });
 
