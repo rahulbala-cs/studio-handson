@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Schibsted_Grotesk, Source_Serif_4 } from 'next/font/google';
 import './globals.css';
+import { StudioInit } from './studio-init';
 
 // A guidebook's split: a sturdy grotesk for names, facts and navigation, a
 // serif for the writing you actually read.
@@ -14,8 +15,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${sans.variable} ${serif.variable}`}>{children}</body>
+    // Studio adds a class to <html> inside its editor, before React hydrates.
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${sans.variable} ${serif.variable}`}>
+        <StudioInit />
+        {children}
+      </body>
     </html>
   );
 }
