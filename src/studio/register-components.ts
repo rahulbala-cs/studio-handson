@@ -33,6 +33,7 @@ import Text from '../components/atoms/Text';
 import Container from '../components/layout/Container';
 import Stack from '../components/layout/Stack';
 import './breakpoints'; // added: the Desktop / Tablet / Mobile switcher
+import './register-design-tokens'; // Session 4: the brand's tokens in the Design tab
 
 const COMPOUND = 'Wayfarer · Compound';
 const ATOMS = 'Wayfarer · Atoms'; // added
