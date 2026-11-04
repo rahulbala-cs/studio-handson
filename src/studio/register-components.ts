@@ -16,6 +16,7 @@
  *                 element, so selecting it on the canvas selects it, not a
  *                 wrapper <div> Studio would otherwise add around it.
  *   sections      the palette group it appears in.
+ *   thumbnailUrl  its preview in the Components panel (src/studio/thumbnails.ts).
  *   defaultValue  what a freshly dropped component shows before it's bound.
  *   design: true  (Session 2) the prop is set per breakpoint; see below.
  */
@@ -34,6 +35,7 @@ import Container from '../components/layout/Container';
 import Stack from '../components/layout/Stack';
 import './breakpoints'; // added: the Desktop / Tablet / Mobile switcher
 import './register-design-tokens'; // Session 4: the brand's tokens in the Design tab
+import { THUMBNAILS } from './thumbnails'; // added
 
 const COMPOUND = 'Wayfarer · Compound';
 const ATOMS = 'Wayfarer · Atoms'; // added
@@ -63,6 +65,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Carousel,
     wrap: false, // added
     sections: [COMPOUND], // added
+    thumbnailUrl: THUMBNAILS.Carousel, // added
     props: {
       title: {
         type: 'string',
@@ -90,6 +93,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: DestinationCards,
     wrap: false, // added
     sections: [COMPOUND], // added
+    thumbnailUrl: THUMBNAILS.DestinationCards, // added
     props: {
       title: {
         type: 'string',
@@ -136,6 +140,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Footer,
     wrap: false, // added
     sections: [COMPOUND], // added
+    thumbnailUrl: THUMBNAILS.Footer, // added
     props: {
       siteName: {
         type: 'string',
@@ -168,6 +173,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Header,
     wrap: false, // added
     sections: [COMPOUND], // added
+    thumbnailUrl: THUMBNAILS.Header, // added
     props: {
       logo: {
         type: 'imageurl',
@@ -200,6 +206,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Hero,
     wrap: false, // added
     sections: [COMPOUND], // added
+    thumbnailUrl: THUMBNAILS.Hero, // added
     props: {
       eyebrow: {
         type: 'string',
@@ -247,6 +254,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Badge,
     wrap: false, // added
     sections: [ATOMS], // added
+    thumbnailUrl: THUMBNAILS.Badge, // added
     props: {
       text: {
         type: 'string',
@@ -273,6 +281,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Button,
     wrap: false, // added
     sections: [ATOMS], // added
+    thumbnailUrl: THUMBNAILS.Button, // added
     props: {
       label: {
         type: 'string',
@@ -302,6 +311,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Heading,
     wrap: false, // added
     sections: [ATOMS], // added
+    thumbnailUrl: THUMBNAILS.Heading, // added
     props: {
       text: {
         type: 'string',
@@ -328,6 +338,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Image,
     wrap: false, // added
     sections: [ATOMS], // added
+    thumbnailUrl: THUMBNAILS.Image, // added
     props: {
       src: {
         type: 'imageurl',
@@ -358,6 +369,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Text,
     wrap: false, // added
     sections: [ATOMS], // added
+    thumbnailUrl: THUMBNAILS.Text, // added
     props: {
       text: {
         type: 'string',
@@ -387,6 +399,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Container,
     wrap: false, // added
     sections: [LAYOUT], // added
+    thumbnailUrl: THUMBNAILS.Container, // added
     props: {
       children: {
         type: 'slot',
@@ -436,6 +449,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
     component: Stack,
     wrap: false, // added
     sections: [LAYOUT], // added
+    thumbnailUrl: THUMBNAILS.Stack, // added
     props: {
       children: {
         type: 'slot',
