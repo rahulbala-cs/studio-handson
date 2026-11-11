@@ -36,7 +36,6 @@ import Container from '../components/layout/Container';
 import Stack from '../components/layout/Stack';
 import Area from '../components/layout/Area';
 import { THUMBNAILS } from './thumbnails'; // added
-import './breakpoints'; // added: the Desktop / Tablet / Mobile switcher
 
 const COMPOUND = 'Wayfarer · Compound';
 const ATOMS = 'Wayfarer · Atoms'; // added
