@@ -26,6 +26,7 @@ import {
   place,
   container,
   stack,
+  area,
   heading,
   textAtom,
   image,
@@ -61,15 +62,18 @@ export function pageHero() {
           columns: { default: 'minmax(0, 6fr) minmax(0, 5fr)', mobile: 'minmax(0, 1fr)' },
         },
         [
-          image(
-            sv,
-            id('photo'),
-            'Photo',
-            bound('imageurl', 'image.url'),
-            bound('string', 'image_alt'),
-            'landscape',
-          ),
-          stack(sv, id('copy'), 'Hero copy', { gap: 'medium' }, [
+          // Session 3 on, a Stack holds Areas: the photo in one, the text in the other.
+          area(sv, id('photo-area'), 'Photo area', {}, [
+            image(
+              sv,
+              id('photo'),
+              'Photo',
+              bound('imageurl', 'image.url'),
+              bound('string', 'image_alt'),
+              'landscape',
+            ),
+          ]),
+          area(sv, id('copy'), 'Hero copy', { gap: 'medium' }, [
             badge(sv, id('duration'), 'Duration', bound('string', 'duration')),
             heading(sv, id('title'), 'Title', bound('string', 'title'), 'h1'),
             textAtom(sv, id('tagline'), 'Tagline', bound('string', 'tagline'), 'lead'),

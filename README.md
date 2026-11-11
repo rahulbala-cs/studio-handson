@@ -37,7 +37,7 @@ npm install
 | `npm run setup`               | Before Session 1: creates your stack, its environment, Live Preview, tokens, content types and content. Safe to re-run.                                |
 | `npm run dev`                 | The site at http://localhost:3000, which is what Studio loads. Keep it running during the sessions.                                                    |
 | `npm run doctor`              | Checks everything is ready. Run it with `npm run dev` running.                                                                                         |
-| `npm run catchup -- <N>`      | Rebuilds what the earlier sessions did in Studio: project settings, Sections, Templates, breakpoints. `2`, `3`, `4` or `final`. Asks before replacing. |
+| `npm run catchup -- <N>`      | Rebuilds what the earlier sessions did in Studio, the same for everyone: project settings, Sections, Templates, breakpoints. `3` also adds the Trip Card that Session 3 starts from. Removes your other templates for Destination, Home Page or Region. `2`, `3`, `4` or `final`. Asks first. |
 | `npm run build` / `npm start` | A production build (http, port 3000).                                                                                                                  |
 
 `setup` and `catchup` use your Contentstack CLI login. If the CLI isn't logged in yet, `npm run setup` asks for your region and runs `csdx auth:login --oauth` for you, and it installs the CLI's Studio plugin if it's missing.

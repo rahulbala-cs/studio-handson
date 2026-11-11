@@ -18,6 +18,9 @@ export const C = {
   // Session 2: atoms and layouts
   container: 'Container',
   stack: 'Stack',
+  area: 'Area', // Session 3 on: a Stack holds Areas, and the Areas hold the items
+  // Studio's own: the Box that Add Condition puts in each Condition Block.
+  box: 'box',
   heading: 'Heading',
   text: 'Text',
   image: 'Image',
@@ -133,9 +136,14 @@ export const repeater = (uid, title, items, children, fieldType) =>
     children,
   });
 
-/** Shows its children only when `condition` holds. One condition, no else. */
-export function conditionBlock(uid, title, condition, children) {
+/**
+ * Shows its children only when `condition` holds. One condition, no else.
+ * `display` is what Layers shows on the row, as Studio saves it when Add
+ * Condition creates the block: { subject: 'Similar Trips', value: 'Destination' }.
+ */
+export function conditionBlock(uid, title, condition, children, display) {
   const n = node('condition-block', uid, { title, children });
+  if (display) n.metadata.conditionDisplay = display;
   n.metadata.condition = condition;
   return n;
 }
@@ -166,6 +174,7 @@ export const when = {
   /** The current reference item is an entry of this content type. */
   contentTypeIs: (repeaterUID, contentTypeUid) => ({
     type: 'reference',
+    subType: 'ref_content_type', // as Add Condition saves it
     operator: 'eq',
     value: contentTypeUid,
     conditionBinding: rep(repeaterUID, '_content_type_uid'),
@@ -193,20 +202,25 @@ const responsive = (prop, byBreakpoint) => ({
 });
 
 export function container(sv, uid, title, opts, children) {
-  const { tone = 'light', width = 'wide', spacing = 'normal', anchor = '' } = opts;
+  const { tone = 'light', width = 'wide', spacing = 'normal', gap = 'medium', anchor = '' } = opts;
   return node(C.container, uid, {
     title,
     props: {
       tone: lit(sv, uid, 'tone', 'choice', tone),
       width: lit(sv, uid, 'width', 'choice', width),
       spacing: lit(sv, uid, 'spacing', 'choice', spacing),
+      gap: lit(sv, uid, 'gap', 'choice', gap),
       anchor: lit(sv, uid, 'anchor', 'string', anchor),
     },
     children,
   });
 }
 
-export function stack(sv, uid, title, opts, children, metadata = {}) {
+/**
+ * A Stack and its Areas. `areas` are area() nodes: Studio keeps a Stack's Areas
+ * in step with its Areas number, so the number is always how many there are.
+ */
+export function stack(sv, uid, title, opts, areas, metadata = {}) {
   const {
     direction = 'vertical',
     gap = 'medium',
@@ -219,17 +233,40 @@ export function stack(sv, uid, title, opts, children, metadata = {}) {
     title,
     metadata,
     props: {
+      areas: lit(sv, uid, 'areas', 'number', areas.length),
       direction: lit(sv, uid, 'direction', 'choice', direction),
       gap: lit(sv, uid, 'gap', 'choice', gap),
       align: lit(sv, uid, 'align', 'choice', align),
       surface: lit(sv, uid, 'surface', 'choice', surface),
       padding: lit(sv, uid, 'padding', 'choice', padding),
     },
-    children,
+    children: areas,
   });
   if (columns) n.styles.gridTemplateColumns = responsive('gridTemplateColumns', columns);
   return n;
 }
+
+/**
+ * One Area of a Stack: lines up the items dropped into it. An Area that holds a
+ * Repeater is marked as its wrapper, as Studio marks it when you add one there.
+ */
+export function area(sv, uid, title, opts, children) {
+  const { direction = 'vertical', gap = 'medium', align = 'start' } = opts;
+  const holdsRepeater = children.some((c) => c.type === 'repeater');
+  return node(C.area, uid, {
+    title,
+    metadata: holdsRepeater ? { repeaterWrapper: true } : {},
+    props: {
+      direction: lit(sv, uid, 'direction', 'choice', direction),
+      gap: lit(sv, uid, 'gap', 'choice', gap),
+      align: lit(sv, uid, 'align', 'choice', align),
+    },
+    children,
+  });
+}
+
+/** The Box inside a Condition Block, which holds that type's layout. */
+export const box = (uid, title, children) => node(C.box, uid, { title, children });
 
 export function heading(sv, uid, title, text, level, { align } = {}) {
   const n = node(C.heading, uid, {
