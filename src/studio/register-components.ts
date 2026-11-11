@@ -531,7 +531,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
       // added: a design prop. For side-by-side stacks, per breakpoint.
       gridTemplateColumns: {
         type: 'choice',
-        displayName: 'Widths',
+        displayName: 'Columns',
         design: true,
         options: [
           { label: 'Equal', value: 'repeat(var(--areas, 2), minmax(0, 1fr))' },
