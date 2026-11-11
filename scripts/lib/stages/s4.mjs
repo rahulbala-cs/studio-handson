@@ -22,7 +22,6 @@ import {
   place,
   placedSections,
   container,
-  stack,
   heading,
   repeater,
 } from './common.mjs';
@@ -66,30 +65,28 @@ export function autumnEscapes(s, ctx) {
       matchedCt: 'region',
       rootBinding: pinnedRoot('region', ctx.europeUid),
     }),
-    container(sv, id('trips-band'), 'Trips band', { anchor: 'trips' }, [
-      stack(sv, id('trips'), 'Trips', { gap: 'large' }, [
-        heading(
-          sv,
-          id('trips-heading'),
-          'Heading',
-          lit(sv, id('trips-heading'), 'text', 'string', 'Three trips under $3,000'),
-          'h2',
-        ),
-        stack(sv, id('grid'), 'Cards', { direction: 'grid', gap: 'large' }, [
-          repeater(
-            rid,
-            'Each trip in the query',
-            { type: 'contentstack_queries', value: { queryUID: QUERY.uid, path: { entries: {} } } },
-            [
-              place(s.trip_card.uid, id('card'), {
-                title: 'Trip Card',
-                matchedCt: 'destination',
-                rootBinding: rep(rid, ''),
-              }),
-            ],
-          ),
-        ]),
-      ]),
+    // The same list shape as Session 3's Similar trips: a Container, a Heading,
+    // then the Repeater, one Trip Card per entry the query returns.
+    container(sv, id('trips-band'), 'Trips band', { anchor: 'trips', width: 'narrow' }, [
+      heading(
+        sv,
+        id('trips-heading'),
+        'Heading',
+        lit(sv, id('trips-heading'), 'text', 'string', 'Three trips under $3,000'),
+        'h2',
+      ),
+      repeater(
+        rid,
+        'Repeater',
+        { type: 'contentstack_queries', value: { queryUID: QUERY.uid, path: { entries: {} } } },
+        [
+          place(s.trip_card.uid, id('card'), {
+            title: 'Trip Card',
+            matchedCt: 'destination',
+            rootBinding: rep(rid, ''),
+          }),
+        ],
+      ),
     ]),
     node(C.footer, id('footer'), {
       title: 'Footer',

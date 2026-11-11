@@ -129,11 +129,8 @@ export const THUMBNAILS = {
   ),
 
   Stack: thumb(
-    dashed(28, 60, 76, 80) +
-      dashed(122, 60, 76, 80) +
-      dashed(216, 60, 76, 80) +
-      bar(56, 96, 20, 8, TEAL) +
-      bar(150, 96, 20, 8, TEAL) +
-      bar(244, 96, 20, 8, TEAL),
+    dashed(36, 52, 116, 96) +
+      dashed(168, 52, 116, 96) +
+      `<path d="M94 82 v36 M76 100 h36 M226 82 v36 M208 100 h36" stroke="${TEAL}" stroke-width="4" stroke-linecap="round"/>`,
   ),
 } as const;

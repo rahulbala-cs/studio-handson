@@ -18,6 +18,8 @@
  *   sections      the palette group it appears in.
  *   thumbnailUrl  its preview in the Components panel (src/studio/thumbnails.ts).
  *   defaultValue  what a freshly dropped component shows before it's bound.
+ *   countProp     a slot whose children follow a number prop: the Stack's
+ *                 Areas.
  */
 import { registerComponents, type RegisterComponentOptionsInput } from '@contentstack/studio-react';
 import Carousel from '../components/compound/Carousel';
@@ -32,11 +34,36 @@ import Image from '../components/atoms/Image';
 import Text from '../components/atoms/Text';
 import Container from '../components/layout/Container';
 import Stack from '../components/layout/Stack';
+import Area from '../components/layout/Area';
 import { THUMBNAILS } from './thumbnails'; // added
+import './breakpoints'; // added: the Desktop / Tablet / Mobile switcher
 
 const COMPOUND = 'Wayfarer · Compound';
 const ATOMS = 'Wayfarer · Atoms'; // added
 const LAYOUT = 'Wayfarer · Layout'; // added
+
+const space = (displayName: string, defaultValue: string) => ({
+  type: 'choice' as const,
+  displayName,
+  options: [
+    { label: 'None', value: 'none' },
+    { label: 'Small', value: 'small' },
+    { label: 'Medium', value: 'medium' },
+    { label: 'Large', value: 'large' },
+  ],
+  defaultValue: [defaultValue],
+});
+
+/** An empty Area: what Studio adds when an author raises a Stack's Areas count. */
+const areaNode = () => ({
+  uid: 'area',
+  type: 'Area',
+  attrs: {},
+  metadata: {},
+  styles: { default: { classes: [], responsiveStyles: { default: {} } } },
+  props: { children: { type: 'slot' as const, slot: 'area-items' } },
+  slots: { 'area-items': [] },
+});
 
 const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode>[] = [
   {
@@ -374,7 +401,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
   {
     type: 'Container',
     displayName: 'Container',
-    description: 'A full-width band with a centred column. Drop anything inside.', // added
+    description: 'A page band: background, width and spacing. Put a Stack inside to lay it out.', // added
     component: Container,
     wrap: false, // added
     sections: [LAYOUT], // added
@@ -414,6 +441,7 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
         ],
         defaultValue: ['normal'],
       },
+      gap: space('Gap', 'medium'), // added: space between what is placed in the band
       anchor: {
         type: 'string',
         displayName: 'Anchor id',
@@ -424,41 +452,44 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
   {
     type: 'Stack',
     displayName: 'Stack',
-    description: 'Arranges items: one above the other, side by side, in two columns or a grid.', // added
+    description: 'Areas to drop things into, side by side or one above the other. Starts with two.', // added
     component: Stack,
     wrap: false, // added
     sections: [LAYOUT], // added
     thumbnailUrl: THUMBNAILS.Stack, // added
     props: {
+      // added: Studio adds or removes Areas to match this number.
+      areas: {
+        type: 'number',
+        displayName: 'Areas',
+        helpText: 'How many areas. Select an area to set how the items in it line up.',
+        min: 1,
+        max: 4,
+        defaultValue: 2,
+      },
       children: {
         type: 'slot',
         displayName: 'Children',
+        countProp: 'areas', // added
+        itemFactory: areaNode, // added
+        defaultValue: [areaNode(), areaNode()], // added
       },
       direction: {
         type: 'choice',
         displayName: 'Direction',
         options: [
-          { label: 'Vertical', value: 'vertical' },
-          { label: 'Horizontal', value: 'horizontal' },
-          { label: 'Split', value: 'split' },
+          { label: 'Side by side', value: 'split' },
+          { label: 'One above the other', value: 'vertical' },
+          { label: 'In a row, sized to fit', value: 'horizontal' },
           { label: 'Grid', value: 'grid' },
         ],
-        defaultValue: ['vertical'],
+        defaultValue: ['split'],
       },
-      gap: {
-        type: 'choice',
-        displayName: 'Gap',
-        options: [
-          { label: 'None', value: 'none' },
-          { label: 'Small', value: 'small' },
-          { label: 'Medium', value: 'medium' },
-          { label: 'Large', value: 'large' },
-        ],
-        defaultValue: ['medium'],
-      },
+      gap: space('Gap', 'large'),
       align: {
         type: 'choice',
         displayName: 'Align',
+        helpText: 'Side by side: lines the areas up top, middle or bottom.', // added
         options: [
           { label: 'Start', value: 'start' },
           { label: 'Center', value: 'center' },
@@ -477,16 +508,43 @@ const components: RegisterComponentOptionsInput<(props?: any) => React.ReactNode
         ],
         defaultValue: ['none'],
       },
-      padding: {
+      padding: space('Padding', 'none'),
+    },
+  },
+  {
+    type: 'Area',
+    displayName: 'Area',
+    description: 'One area of a Stack: sets how the items dropped into it line up.', // added
+    component: Area,
+    wrap: false, // added
+    hideFromComponentList: true, // added: a Stack adds its own Areas
+    props: {
+      children: {
+        type: 'slot',
+        displayName: 'Children',
+      },
+      direction: {
         type: 'choice',
-        displayName: 'Padding',
+        displayName: 'Arrange items',
         options: [
-          { label: 'None', value: 'none' },
-          { label: 'Small', value: 'small' },
-          { label: 'Medium', value: 'medium' },
-          { label: 'Large', value: 'large' },
+          { label: 'One above the other', value: 'vertical' },
+          { label: 'In a row', value: 'horizontal' },
+          { label: 'Grid', value: 'grid' },
         ],
-        defaultValue: ['none'],
+        defaultValue: ['vertical'],
+      },
+      gap: space('Gap', 'medium'),
+      align: {
+        type: 'choice',
+        displayName: 'Align',
+        options: [
+          { label: 'Start', value: 'start' },
+          { label: 'Center', value: 'center' },
+          { label: 'End', value: 'end' },
+          { label: 'Stretch', value: 'stretch' },
+          { label: 'Spread out', value: 'between' },
+        ],
+        defaultValue: ['start'],
       },
     },
   },
