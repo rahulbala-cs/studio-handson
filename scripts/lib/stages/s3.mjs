@@ -15,8 +15,9 @@
  *                 compound, two lists the attendee builds straight on the
  *                 template, each a Container holding a Heading and a Repeater:
  *     The trip, day by day   a Repeater over the `itinerary` modular blocks, one
- *                            Condition Block per block type (Day, Quote), its Box
- *                            holding atoms bound from the block
+ *                            Condition Block per block type, each with its own
+ *                            look: a Day is atoms straight in its Box, a Quote
+ *                            a sand Container (a tinted panel) holding atoms
  *     Similar trips          a Repeater over `related_trips`, one Condition Block
  *                            (content type: Destination), its Box holding the
  *                            Trip Card
@@ -128,7 +129,11 @@ const similarTrips = (s) => (sv, P) =>
     ),
   );
 
-/** The trip, day by day: a layout per block type, atoms straight in each Box. */
+/**
+ * The trip, day by day: a layout per block type. A Day is a Badge, a Heading
+ * and a Text straight in its Box; a Quote sits in a sand Container, which the
+ * site draws as a tinted panel, so the two types look different on the page.
+ */
 const itinerary = (sv, P) =>
   listBand(sv, P, 'itinerary', { label: 'The trip, day by day', width: 'narrow' }, (id) => {
     const rid = id('repeater');
@@ -157,8 +162,10 @@ const itinerary = (sv, P) =>
           when.blockIs(rid, 'quote'),
           [
             box(id('quote'), 'Box', [
-              textAtom(sv, id('quote-text'), 'Text', item('quote'), 'lead'),
-              textAtom(sv, id('quote-name'), 'Text', item('name'), 'small'),
+              container(sv, id('quote-panel'), 'Container', { tone: 'sand' }, [
+                textAtom(sv, id('quote-text'), 'Text', item('quote'), 'lead'),
+                textAtom(sv, id('quote-name'), 'Text', item('name'), 'small'),
+              ]),
             ]),
           ],
           { subject: 'Itinerary', value: 'Quote' },
