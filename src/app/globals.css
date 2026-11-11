@@ -232,6 +232,19 @@ div:not(.stack, .container__inner) > :is(.badge, .heading, .text, .img, .button)
   margin-top: 2rem;
 }
 
+/* A Repeater's list of Sections (the Trip Card on every trip) sits side by
+   side, as many as fit, like the Destination Cards compound. Studio puts a
+   Repeater added to a band in a Box of its own, and renders the Repeater and
+   its Condition Blocks as display: contents, so the Box's children are those;
+   this styles that Box when the items are Sections (they hold a Container). A
+   Repeater of plain atoms (an itinerary) stays one above the other. */
+div:not(.container__inner):has(> div[style*='contents']):has(.container) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
+  align-items: start;
+}
+
 /* ── Heading (atom) ───────────────────────────────────────────────────────── */
 .heading {
   margin: 0;
