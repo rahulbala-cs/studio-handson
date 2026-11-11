@@ -18,7 +18,7 @@ export const C = {
   // Session 2: atoms and layouts
   container: 'Container',
   stack: 'Stack',
-  area: 'Area', // Session 3 on: a Stack holds Areas, and the Areas hold the items
+  area: 'Area', // Session 2 on: a Stack holds Areas, and the Areas hold the items
   // Studio's own: the Box that Add Condition puts in each Condition Block.
   box: 'box',
   heading: 'Heading',

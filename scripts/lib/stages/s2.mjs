@@ -62,7 +62,7 @@ export function pageHero() {
           columns: { default: 'minmax(0, 6fr) minmax(0, 5fr)', mobile: 'minmax(0, 1fr)' },
         },
         [
-          // Session 3 on, a Stack holds Areas: the photo in one, the text in the other.
+          // A Stack holds Areas: the photo in one, the text in the other.
           area(sv, id('photo-area'), 'Photo area', {}, [
             image(
               sv,
