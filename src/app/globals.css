@@ -101,6 +101,14 @@ body {
 .stack__area .container {
   padding-inline: 0;
 }
+/* A Container with a Tone inside another band, such as the quote in an
+   itinerary, is a tinted panel: its own padding, rounded corners, and room
+   above it. A band of its own on the page keeps the full-width band. */
+.container .container:is(.container--sand, .container--teal) {
+  padding: 1.5rem 1.75rem;
+  margin-top: 2rem;
+  border-radius: var(--radius);
+}
 
 /* ── Stack (layout) ───────────────────────────────────────────────────────── */
 .stack {
@@ -236,9 +244,10 @@ div:not(.stack, .container__inner) > :is(.badge, .heading, .text, .img, .button)
    side, as many as fit, like the Destination Cards compound. Studio puts a
    Repeater added to a band in a Box of its own, and renders the Repeater and
    its Condition Blocks as display: contents, so the Box's children are those;
-   this styles that Box when the items are Sections (they hold a Container). A
-   Repeater of plain atoms (an itinerary) stays one above the other. */
-div:not(.container__inner):has(> div[style*='contents']):has(.container) {
+   this styles that Box when the items are Sections laid out with a Stack (a
+   Container holding a Stack, like the Trip Card). An itinerary, plain atoms
+   or a tinted panel, stays one above the other. */
+div:not(.container__inner):has(> div[style*='contents']):has(.container .stack) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   gap: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
