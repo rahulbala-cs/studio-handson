@@ -7,7 +7,7 @@
  *   stage3start   what `catchup -- 3` builds before Session 3: Sessions 1-2,
  *                 plus one ready-made Section (Session 2 already taught building
  *                 one from atoms, and today is about lists):
- *     Trip Card     linked to Destination: one trip's photo beside its details.
+ *     Trip Card     linked to Destination: one trip's photo, then its details.
  *                   Its Container gives it a sensible width on its own canvas.
  *
  *   stage3        the end of Session 3, which `catchup -- 4` builds. On the
@@ -40,6 +40,7 @@ import {
   stack,
   area,
   box,
+  repeaterWrapper,
   heading,
   textAtom,
   image,
@@ -52,14 +53,14 @@ import {
 import { destinationTemplate, homeTemplate, tripGallery, DESTINATION_SCHEMA } from './s1.mjs';
 import { pageHero, placePageHero, regionTemplate } from './s2.mjs';
 
-/** One trip: the photo beside its details, one above the other on a phone. */
+/** One trip: its photo, then its details. A list of them sits side by side (globals.css). */
 export function tripCard() {
   const sv = new StaticValues();
   const P = 'trip_card';
   const id = (k) => nid(P, k);
   const tree = page(id('page'), [
     container(sv, id('band'), 'Card band', { width: 'narrow', spacing: 'compact' }, [
-      stack(sv, id('card'), 'Card', { direction: 'split', gap: 'medium', align: 'center' }, [
+      stack(sv, id('card'), 'Card', { direction: 'vertical', gap: 'medium' }, [
         area(sv, id('photo-area'), 'Photo', {}, [
           image(
             sv,
@@ -90,18 +91,22 @@ export function tripCard() {
   return sectionEntry('Trip Card', sv, tree, { linkedSchemas: [DESTINATION_SCHEMA] });
 }
 
-/** A list on the template: a Container holding a Heading, then the Repeater. */
+/**
+ * A list on the template: a Container holding a Heading, then the Repeater.
+ * Studio puts a Repeater added after the Heading in a Box of its own, marked
+ * as the Repeater's wrapper; this builds the same.
+ */
 const listBand = (sv, P, key, { label, width }, list) => {
   const id = (k) => nid(P, key, k);
   return container(sv, id('band'), `${label} band`, { width }, [
     heading(sv, id('heading'), 'Heading', lit(sv, id('heading'), 'text', 'string', label), 'h2'),
-    list(id),
+    repeaterWrapper(id('wrapper'), [list(id)]),
   ]);
 };
 
 /** Similar trips: one Trip Card per similar trip. */
 const similarTrips = (s) => (sv, P) =>
-  listBand(sv, P, 'trips', { label: 'Similar trips', width: 'narrow' }, (id) =>
+  listBand(sv, P, 'trips', { label: 'Similar trips', width: 'wide' }, (id) =>
     repeater(
       id('repeater'),
       'Repeater',
