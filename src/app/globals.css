@@ -182,7 +182,7 @@ body {
 }
 
 /* split ("side by side"): one equal column per Area (the Stack sets --areas),
-   one column on a phone. An author's Widths, per breakpoint, win over both.
+   one column on a phone. An author's Columns, per breakpoint, win over both.
    grid: as many columns as fit at a comfortable photo size. */
 .stack--split,
 .stack--grid {
