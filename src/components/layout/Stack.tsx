@@ -23,7 +23,7 @@ export type StackSurface = 'none' | 'card';
 export interface StackProps {
   /** What goes inside the stack: its Areas (older Stacks hold items directly). */
   children?: ReactNode;
-  /** How many Areas. Side by side (split), they get equal columns unless Widths says otherwise. */
+  /** How many Areas. Side by side (split), they get equal columns unless Columns says otherwise. */
   areas?: number;
   /** How the items are arranged. */
   direction?: StackDirection;
