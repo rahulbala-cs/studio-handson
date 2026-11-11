@@ -24,6 +24,7 @@ import {
   container,
   heading,
   repeater,
+  repeaterWrapper,
 } from './common.mjs';
 import { stage3 } from './s3.mjs';
 
@@ -67,7 +68,7 @@ export function autumnEscapes(s, ctx) {
     }),
     // The same list shape as Session 3's Similar trips: a Container, a Heading,
     // then the Repeater, one Trip Card per entry the query returns.
-    container(sv, id('trips-band'), 'Trips band', { anchor: 'trips', width: 'narrow' }, [
+    container(sv, id('trips-band'), 'Trips band', { anchor: 'trips' }, [
       heading(
         sv,
         id('trips-heading'),
@@ -75,18 +76,21 @@ export function autumnEscapes(s, ctx) {
         lit(sv, id('trips-heading'), 'text', 'string', 'Three trips under $3,000'),
         'h2',
       ),
-      repeater(
-        rid,
-        'Repeater',
-        { type: 'contentstack_queries', value: { queryUID: QUERY.uid, path: { entries: {} } } },
-        [
-          place(s.trip_card.uid, id('card'), {
-            title: 'Trip Card',
-            matchedCt: 'destination',
-            rootBinding: rep(rid, ''),
-          }),
-        ],
-      ),
+      // Studio's own Box around the Repeater, as it adds one; the cards sit side by side in it.
+      repeaterWrapper(id('wrapper'), [
+        repeater(
+          rid,
+          'Repeater',
+          { type: 'contentstack_queries', value: { queryUID: QUERY.uid, path: { entries: {} } } },
+          [
+            place(s.trip_card.uid, id('card'), {
+              title: 'Trip Card',
+              matchedCt: 'destination',
+              rootBinding: rep(rid, ''),
+            }),
+          ],
+        ),
+      ]),
     ]),
     node(C.footer, id('footer'), {
       title: 'Footer',
