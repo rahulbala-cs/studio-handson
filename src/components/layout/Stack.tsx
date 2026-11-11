@@ -1,14 +1,17 @@
 /**
- * Layout: arranges whatever is placed inside it.
+ * Layout: places its Areas. Authors drop things into an Area, never into the
+ * Stack itself: Studio adds or removes Areas to match the Areas number.
  *
- *   vertical    one above the other
- *   horizontal  side by side, sized to content (a menu, a price + link row)
- *   split       two columns, the first a little wider (a hero)
- *   grid        as many columns as fit (a list of cards)
+ *   split       side by side, one equal column per Area (a hero)
+ *   vertical    one above the other (a card: photo, then details)
+ *   horizontal  in a row, sized to content (a price + link row)
+ *   grid        as many columns as fit
  *
+ * Each Area then lines up its own items (src/components/layout/Area.tsx).
  * `surface: card` makes the Stack a card: a photo with its details below.
+ * Stacks saved before Areas existed hold their items directly; they still render.
  */
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { StudioAttributes } from '@contentstack/studio-react';
 import { cx } from '@/lib/cx';
 
@@ -18,8 +21,10 @@ export type StackAlign = 'start' | 'center' | 'end' | 'stretch' | 'between';
 export type StackSurface = 'none' | 'card';
 
 export interface StackProps {
-  /** What goes inside the stack. */
+  /** What goes inside the stack: its Areas (older Stacks hold items directly). */
   children?: ReactNode;
+  /** How many Areas. Side by side (split), they get equal columns unless Widths says otherwise. */
+  areas?: number;
   /** How the items are arranged. */
   direction?: StackDirection;
   /** Space between the items. */
@@ -40,6 +45,7 @@ export interface StackProps {
 
 export default function Stack({
   children,
+  areas = 2,
   direction = 'vertical',
   gap = 'medium',
   align = 'start',
@@ -61,6 +67,7 @@ export default function Stack({
         gridTemplateColumns,
         className,
       )}
+      style={{ '--areas': areas } as CSSProperties}
       {...studioAttributes}
     >
       {children}

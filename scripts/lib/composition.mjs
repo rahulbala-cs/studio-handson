@@ -134,10 +134,10 @@ export function node(type, uid, { title, props = {}, metadata = {}, children, cl
     uid,
     type,
     attrs: {},
+    // `title` is only a label for this code. It is not saved: Studio would show
+    // it in Layers instead of the component's name, and attendees should see
+    // the names of the components they drop (Container, Stack, Repeater...).
     metadata: {
-      // Studio reads `title` as the Layers-panel label. Without it the tree reads
-      // as repeated type names and cannot be navigated.
-      ...(title ? { title } : {}),
       visible: true,
       locked: false,
       ...metadata,
