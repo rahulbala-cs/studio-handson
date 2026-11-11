@@ -268,6 +268,13 @@ export function area(sv, uid, title, opts, children) {
 /** The Box inside a Condition Block, which holds that type's layout. */
 export const box = (uid, title, children) => node(C.box, uid, { title, children });
 
+/** The Box Studio puts around a Repeater added to a band, marked as its wrapper. */
+export function repeaterWrapper(uid, children) {
+  const n = box(uid, 'Box', children);
+  n.metadata.repeaterWrapper = true;
+  return n;
+}
+
 export function heading(sv, uid, title, text, level, { align } = {}) {
   const n = node(C.heading, uid, {
     title,
