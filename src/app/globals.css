@@ -77,7 +77,10 @@ body {
 .container--space-spacious {
   padding-block: clamp(3.5rem, 2rem + 6vw, 7rem);
 }
+/* What is placed in a band sits one above the other, spaced by its Gap. */
 .container__inner {
+  display: flex;
+  flex-direction: column;
   margin-inline: auto;
   width: 100%;
 }
@@ -90,9 +93,13 @@ body {
 .container__inner--wide {
   max-width: 76rem;
 }
-/* A band's top-level Stack spans the band. */
-.container__inner > .stack {
-  width: 100%;
+/* A Container inside another Container or an Area (a Section placed in a
+   list, like the Trip Card) takes no gutter: the page's band already has one.
+   Its spacing above and below stays, and spaces the list's items. On its own
+   canvas the Section keeps its whole band. */
+.container .container,
+.stack__area .container {
+  padding-inline: 0;
 }
 
 /* ── Stack (layout) ───────────────────────────────────────────────────────── */
@@ -166,14 +173,20 @@ body {
   flex: 1 1 0;
 }
 
-/* split: two columns, the first a little wider.
+/* split ("side by side"): one equal column per Area (the Stack sets --areas),
+   one column on a phone. An author's Widths, per breakpoint, win over both.
    grid: as many columns as fit at a comfortable photo size. */
 .stack--split,
 .stack--grid {
   display: grid;
 }
 :where(.stack--split) {
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  grid-template-columns: repeat(var(--areas, 2), minmax(0, 1fr));
+}
+@media (max-width: 640px) {
+  :where(.stack--split) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 :where(.stack--grid) {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
@@ -205,6 +218,18 @@ body {
   margin-top: auto;
   padding-top: 0.75rem;
   border-top: 1px solid var(--line);
+}
+
+/* Atoms dropped straight into a Box (what a Repeater's Condition Block holds)
+   sit one above the other with a little space, as they would in an Area, and
+   each Box starts with room above it, so a list of blocks reads as a list
+   whether or not Studio wrapped the Repeater in a Box of its own. In a Stack,
+   an Area or a band, the Gap spaces them instead. */
+div:not(.stack, .container__inner) > :is(.badge, .heading, .text, .img, .button) + :is(.badge, .heading, .text, .img, .button) {
+  margin-top: 0.5rem;
+}
+div:not(.stack, .container__inner) > :is(.badge, .heading, .text, .img, .button):first-child {
+  margin-top: 2rem;
 }
 
 /* ── Heading (atom) ───────────────────────────────────────────────────────── */
@@ -383,6 +408,10 @@ body {
 }
 
 /* ── Hero (compound) ──────────────────────────────────────────────────────── */
+/* Text first and a little wider, fixed in code. */
+.hero__layout {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+}
 /* The compound decides in CODE that its columns stack on a phone. The Hero
    rebuilt from atoms in Session 2 leaves that to the author, per breakpoint. */
 @media (max-width: 760px) {

@@ -7,12 +7,16 @@
  * missed one or something broke. Run it after switching to the matching code:
  *
  *   npm run catchup -- 2     git switch session-2-start     (Session 1's result)
- *   npm run catchup -- 3     git switch session-3-start     (Sessions 1-2)
+ *   npm run catchup -- 3     git switch session-3-start     (Sessions 1-2, and the
+ *                                                           pieces Session 3 starts from)
  *   npm run catchup -- 4     git switch session-4-start     (Sessions 1-3)
  *   npm run catchup -- final git switch final              (all four)
  *
- * It replaces Sections and Templates that have the same names, and asks first.
- * Anything else you built is left alone. Add --yes to skip the question.
+ * It rebuilds Sections and Templates that have the same names, whatever state
+ * yours are in, so everyone starts the session from the same place. It removes
+ * your other templates for Destination, Home Page or Region: they would claim
+ * the same URLs. Anything else you built is left alone. It asks first; add
+ * --yes to skip the question.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -20,16 +24,15 @@ import path from 'node:path';
 import readline from 'node:readline/promises';
 import { resolveAuth, cma, log, run } from './lib/cma.mjs';
 import { upsertComposition, findCompositionByTitle } from './lib/composition.mjs';
-import { requireStack, COMPOSITIONS_CT, ROOT } from './lib/config.mjs';
+import { requireStack, COMPOSITIONS_CT, ROOT, ENVIRONMENT, LOCALE } from './lib/config.mjs';
 import { ensureProject } from './lib/studio-project.mjs';
 import { stage1 } from './lib/stages/s1.mjs';
-import { stage2 } from './lib/stages/s2.mjs';
-import { stage3 } from './lib/stages/s3.mjs';
+import { stage3, stage3start } from './lib/stages/s3.mjs';
 import { stage4 } from './lib/stages/s4.mjs';
 
 const RESULTS = {
   2: { label: 'Session 1', steps: stage1, freeform: false, branch: 'session-2-start' },
-  3: { label: 'Session 2', steps: stage2, freeform: false, branch: 'session-3-start' },
+  3: { label: 'Session 2', steps: stage3start, freeform: false, branch: 'session-3-start' },
   4: { label: 'Session 3', steps: stage3, freeform: false, branch: 'session-4-start' },
   final: { label: 'Session 4', steps: stage4, freeform: true, branch: 'final' },
 };
@@ -73,7 +76,25 @@ run(async () => {
     titles.push(sample.title);
     const exists = await findCompositionByTitle(sample.title);
     log.info(
-      `${sample.place_composition_as === 'page' ? 'Template' : 'Section '} ${sample.title}${exists ? '  \x1b[33m(replaces yours)\x1b[0m' : ''}`,
+      `${sample.place_composition_as === 'page' ? 'Template' : 'Section '} ${sample.title}${exists ? '  \x1b[33m(rebuilds yours)\x1b[0m' : ''}`,
+    );
+  }
+
+  // Another template for one of these content types claims the same URLs, and
+  // its pages can win over the ones rebuilt here.
+  const { entries: templates = [] } = await cma(
+    apiKey,
+    `/content_types/${COMPOSITIONS_CT}/entries?query=${encodeURIComponent(JSON.stringify({ place_composition_as: 'page' }))}`,
+  );
+  const ours = new Set(titles);
+  const rivals = templates.filter(
+    (e) =>
+      !ours.has(e.title) &&
+      ['destination', 'home_page', 'region'].includes(e.connected_content_type),
+  );
+  for (const r of rivals) {
+    log.info(
+      `Template ${r.title}  \x1b[33m(removed: it is also connected to ${r.connected_content_type})\x1b[0m`,
     );
   }
 
@@ -97,21 +118,15 @@ run(async () => {
     log.ok(`${created ? 'created' : 'replaced'} ${entry.title} (published)`);
   }
 
-  // Two templates for the same content type fight over the same URLs.
-  const { entries = [] } = await cma(
-    apiKey,
-    `/content_types/${COMPOSITIONS_CT}/entries?query=${encodeURIComponent(JSON.stringify({ place_composition_as: 'page' }))}`,
-  );
-  const ours = new Set(titles);
-  const rivals = entries.filter(
-    (e) =>
-      !ours.has(e.title) &&
-      ['destination', 'home_page', 'region'].includes(e.connected_content_type),
-  );
   for (const r of rivals) {
-    log.warn(
-      `Your template "${r.title}" is also connected to ${r.connected_content_type}: its URLs may win over these. Delete it or change its URL in Studio.`,
-    );
+    const entryPath = `/content_types/${COMPOSITIONS_CT}/entries/${r.uid}`;
+    // Unpublish first, so the site stops serving it, then delete it.
+    await cma(apiKey, `${entryPath}/unpublish`, {
+      method: 'POST',
+      body: { entry: { environments: [ENVIRONMENT], locales: [LOCALE] } },
+    }).catch(() => {});
+    await cma(apiKey, entryPath, { method: 'DELETE' });
+    log.ok(`removed ${r.title} (it was also connected to ${r.connected_content_type})`);
   }
 
   // Session 2 sends the breakpoints to the project with the CLI; do the same.

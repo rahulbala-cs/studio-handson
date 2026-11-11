@@ -9,6 +9,7 @@ import { cx } from '@/lib/cx';
 export type ContainerTone = 'light' | 'sand' | 'teal';
 export type ContainerWidth = 'narrow' | 'normal' | 'wide';
 export type ContainerSpacing = 'compact' | 'normal' | 'spacious';
+export type ContainerGap = 'none' | 'small' | 'medium' | 'large';
 
 export interface ContainerProps {
   /** What goes inside the band. */
@@ -19,6 +20,8 @@ export interface ContainerProps {
   width?: ContainerWidth;
   /** Space above and below the content. */
   spacing?: ContainerSpacing;
+  /** Space between the things placed one above the other inside the band. */
+  gap?: ContainerGap;
   /** Optional id, so a link like "/#trips" can jump here. */
   anchor?: string | null;
   className?: string;
@@ -29,6 +32,7 @@ export default function Container({
   tone = 'light',
   width = 'wide',
   spacing = 'normal',
+  gap = 'medium',
   anchor,
   className,
   studioAttributes,
@@ -39,7 +43,7 @@ export default function Container({
       className={cx('container', `container--${tone}`, `container--space-${spacing}`, className)}
       {...studioAttributes}
     >
-      <div className={cx('container__inner', `container__inner--${width}`)}>{children}</div>
+      <div className={cx('container__inner', `container__inner--${width}`, `stack--gap-${gap}`)}>{children}</div>
     </section>
   );
 }

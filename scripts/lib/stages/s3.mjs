@@ -1,22 +1,31 @@
 /**
- * The end of Session 3: Repeaters and Conditions, over references and modular
- * blocks. No code changes in this session.
+ * Session 3: Repeaters and Conditions, over references and modular blocks. No
+ * code changes in this session.
  *
- *   Trip Card     Section from atoms, linked to Destination: one trip's card.
- *   Trip lists    on each TEMPLATE, a Repeater over a reference field with one
- *                 Condition Block (content type: Destination) holding the Trip
- *                 Card, which reads each item. The same card on three templates:
- *                   Destination   Similar trips   related_trips
- *                   Home          Where we go     featured_destinations
- *                   Region        The trips       trips
- *                 Each replaces that template's Destination Cards compound.
- *   Itinerary     Section. A Repeater over the `itinerary` modular blocks, one
- *                 Condition Block per block type: day, quote, photo.
- *   Destination   Header, Page Hero, Carousel, Itinerary, Similar trips, Footer
+ * Two stages:
  *
- * The session also adds a fourth block type (a Tip) to the content type and one
- * more Condition for it. That is the attendee's own change to their content
- * model, so catch-up leaves it out.
+ *   stage3start   what `catchup -- 3` builds before Session 3: Sessions 1-2,
+ *                 plus one ready-made Section (Session 2 already taught building
+ *                 one from atoms, and today is about lists):
+ *     Trip Card     linked to Destination: one trip's photo beside its details.
+ *                   Its Container gives it a sensible width on its own canvas.
+ *
+ *   stage3        the end of Session 3, which `catchup -- 4` builds. On the
+ *                 Destination template, in place of the Destination Cards
+ *                 compound, two lists the attendee builds straight on the
+ *                 template, each a Container holding a Heading and a Repeater:
+ *     The trip, day by day   a Repeater over the `itinerary` modular blocks, one
+ *                            Condition Block per block type (Day, Quote), its Box
+ *                            holding atoms bound from the block
+ *     Similar trips          a Repeater over `related_trips`, one Condition Block
+ *                            (content type: Destination), its Box holding the
+ *                            Trip Card
+ *
+ * Built on the TEMPLATE, not as Sections: a Section placed in a Repeater reads
+ * each item only when the Repeater is on a Template. Home and Region keep
+ * Session 2's Destination Cards compound. The session also adds a Tip block
+ * type and one more Condition for it: that is the attendee's own change to
+ * their content model, so catch-up leaves it out.
  */
 import { nid } from '../composition.mjs';
 import {
@@ -29,6 +38,8 @@ import {
   place,
   container,
   stack,
+  area,
+  box,
   heading,
   textAtom,
   image,
@@ -41,25 +52,28 @@ import {
 import { destinationTemplate, homeTemplate, tripGallery, DESTINATION_SCHEMA } from './s1.mjs';
 import { pageHero, placePageHero, regionTemplate } from './s2.mjs';
 
+/** One trip: the photo beside its details, one above the other on a phone. */
 export function tripCard() {
   const sv = new StaticValues();
   const P = 'trip_card';
   const id = (k) => nid(P, k);
   const tree = page(id('page'), [
-    stack(sv, id('card'), 'Card', { surface: 'card', align: 'stretch' }, [
-      image(
-        sv,
-        id('photo'),
-        'Photo',
-        bound('imageurl', 'image.url'),
-        bound('string', 'image_alt'),
-        'landscape',
-      ),
-      stack(sv, id('details'), 'Details', { gap: 'small' }, [
-        badge(sv, id('duration'), 'Duration', bound('string', 'duration')),
-        heading(sv, id('title'), 'Title', bound('string', 'title'), 'h3'),
-        textAtom(sv, id('tagline'), 'Tagline', bound('string', 'tagline')),
-        stack(sv, id('price-row'), 'Price row', { direction: 'horizontal', align: 'between' }, [
+    container(sv, id('band'), 'Card band', { width: 'narrow', spacing: 'compact' }, [
+      stack(sv, id('card'), 'Card', { direction: 'split', gap: 'medium', align: 'center' }, [
+        area(sv, id('photo-area'), 'Photo', {}, [
+          image(
+            sv,
+            id('photo'),
+            'Photo',
+            bound('imageurl', 'image.url'),
+            bound('string', 'image_alt'),
+            'landscape',
+          ),
+        ]),
+        area(sv, id('details'), 'Details', { gap: 'small' }, [
+          badge(sv, id('duration'), 'Duration', bound('string', 'duration')),
+          heading(sv, id('title'), 'Title', bound('string', 'title'), 'h3'),
+          textAtom(sv, id('tagline'), 'Tagline', bound('string', 'tagline')),
           textAtom(sv, id('price'), 'Price', bound('string', 'price'), 'strong'),
           button(
             sv,
@@ -76,120 +90,105 @@ export function tripCard() {
   return sectionEntry('Trip Card', sv, tree, { linkedSchemas: [DESTINATION_SCHEMA] });
 }
 
-/**
- * A list of trips, built on the TEMPLATE (not as a Section): a Section placed
- * in a Repeater reads each item only when the Repeater is on a Template.
- */
-export const tripList = (field, label) => (s) => (sv, P) => {
-  const id = (k) => nid(P, 'trips', k);
-  const rid = id('repeater');
-  return container(sv, id('band'), `${label} band`, {}, [
-    stack(sv, id('layout'), 'Layout', { gap: 'large' }, [
-      heading(sv, id('heading'), 'Heading', lit(sv, id('heading'), 'text', 'string', label), 'h2'),
-      stack(sv, id('grid'), 'Cards', { direction: 'grid', gap: 'large' }, [
-        repeater(
-          rid,
-          `Each trip in ${field}`,
-          bound('array', field).binding,
-          [
-            conditionBlock(
-              id('if-destination'),
-              'If it is a destination',
-              when.contentTypeIs(rid, 'destination'),
-              [
-                place(s.trip_card.uid, id('card'), {
-                  title: 'Trip Card',
-                  rootBinding: rep(rid, ''),
-                }),
-              ],
-            ),
-          ],
-          'reference',
-        ),
-      ]),
-    ]),
+/** A list on the template: a Container holding a Heading, then the Repeater. */
+const listBand = (sv, P, key, { label, width }, list) => {
+  const id = (k) => nid(P, key, k);
+  return container(sv, id('band'), `${label} band`, { width }, [
+    heading(sv, id('heading'), 'Heading', lit(sv, id('heading'), 'text', 'string', label), 'h2'),
+    list(id),
   ]);
 };
 
-export function itinerary() {
-  const sv = new StaticValues();
-  const P = 'itinerary';
-  const id = (k) => nid(P, k);
-  const rid = id('repeater');
-  const item = (path) => ({ type: 'string', binding: rep(rid, path) });
-  const tree = page(id('page'), [
-    container(sv, id('band'), 'Itinerary band', { width: 'normal' }, [
-      stack(sv, id('layout'), 'Layout', { gap: 'large' }, [
-        heading(
-          sv,
-          id('heading'),
-          'Heading',
-          lit(sv, id('heading'), 'text', 'string', 'The trip, day by day'),
-          'h2',
-        ),
-        repeater(
-          rid,
-          'Each block',
-          bound('array', 'itinerary').binding,
+/** Similar trips: one Trip Card per similar trip. */
+const similarTrips = (s) => (sv, P) =>
+  listBand(sv, P, 'trips', { label: 'Similar trips', width: 'narrow' }, (id) =>
+    repeater(
+      id('repeater'),
+      'Repeater',
+      bound('array', 'related_trips').binding,
+      [
+        conditionBlock(
+          id('if-destination'),
+          'Condition Block',
+          when.contentTypeIs(id('repeater'), 'destination'),
           [
-            conditionBlock(id('if-day'), 'Day', when.blockIs(rid, 'day'), [
-              stack(sv, id('day'), 'Day', { gap: 'small' }, [
-                badge(sv, id('day-label'), 'Label', item('label')),
-                heading(sv, id('day-title'), 'Title', item('title'), 'h3'),
-                textAtom(sv, id('day-text'), 'Text', item('text')),
-              ]),
-            ]),
-            conditionBlock(id('if-quote'), 'Quote', when.blockIs(rid, 'quote'), [
-              stack(sv, id('quote'), 'Quote', { gap: 'small' }, [
-                textAtom(sv, id('quote-text'), 'Quote', item('quote'), 'lead'),
-                textAtom(sv, id('quote-name'), 'Name', item('name'), 'small'),
-              ]),
-            ]),
-            conditionBlock(id('if-photo'), 'Photo', when.blockIs(rid, 'photo'), [
-              stack(sv, id('photo'), 'Photo', { gap: 'small' }, [
-                image(
-                  sv,
-                  id('photo-img'),
-                  'Image',
-                  { type: 'imageurl', binding: rep(rid, 'image.url') },
-                  item('caption'),
-                  'wide',
-                ),
-                textAtom(sv, id('photo-caption'), 'Caption', item('caption'), 'small'),
-              ]),
+            box(id('box'), 'Box', [
+              place(s.trip_card.uid, id('card'), { rootBinding: rep(id('repeater'), '') }),
             ]),
           ],
-          'modular_block',
+          { subject: 'Similar Trips', value: 'Destination' },
         ),
-      ]),
-    ]),
-  ]);
-  return sectionEntry('Itinerary', sv, tree, { linkedSchemas: [DESTINATION_SCHEMA] });
-}
+      ],
+      'reference',
+    ),
+  );
 
-const placeItinerary = (s) => (sv, P) =>
-  place(s.itinerary.uid, nid(P, 'itinerary'), { title: 'Itinerary', matchedCt: 'destination' });
+/** The trip, day by day: a layout per block type, atoms straight in each Box. */
+const itinerary = (sv, P) =>
+  listBand(sv, P, 'itinerary', { label: 'The trip, day by day', width: 'narrow' }, (id) => {
+    const rid = id('repeater');
+    const item = (path) => ({ type: 'string', binding: rep(rid, path) });
+    return repeater(
+      rid,
+      'Repeater',
+      bound('array', 'itinerary').binding,
+      [
+        conditionBlock(
+          id('if-day'),
+          'Condition Block',
+          when.blockIs(rid, 'day'),
+          [
+            box(id('day'), 'Box', [
+              badge(sv, id('day-label'), 'Badge', item('label')),
+              heading(sv, id('day-title'), 'Heading', item('title'), 'h3'),
+              textAtom(sv, id('day-text'), 'Text', item('text')),
+            ]),
+          ],
+          { subject: 'Itinerary', value: 'Day' },
+        ),
+        conditionBlock(
+          id('if-quote'),
+          'Condition Block',
+          when.blockIs(rid, 'quote'),
+          [
+            box(id('quote'), 'Box', [
+              textAtom(sv, id('quote-text'), 'Text', item('quote'), 'lead'),
+              textAtom(sv, id('quote-name'), 'Text', item('name'), 'small'),
+            ]),
+          ],
+          { subject: 'Itinerary', value: 'Quote' },
+        ),
+      ],
+      'modular_block',
+    );
+  });
 
-export const stage3 = [
+const common = [
   { key: 'trip_gallery', build: () => tripGallery() },
   { key: 'page_hero', build: () => pageHero() },
   { key: 'trip_card', build: () => tripCard() },
-  { key: 'itinerary', build: () => itinerary() },
+];
+
+/** Sessions 1-2, plus the Trip Card Session 3 starts from. */
+export const stage3start = [
+  ...common,
+  { key: 'destination', build: (s) => destinationTemplate(s, { hero: placePageHero(s, 'destination') }) },
+  { key: 'home', build: (s) => homeTemplate(s) },
+  { key: 'region', build: (s) => regionTemplate(s) },
+];
+
+/** The end of Session 3. */
+export const stage3 = [
+  ...common,
   {
     key: 'destination',
     build: (s) =>
       destinationTemplate(s, {
         hero: placePageHero(s, 'destination'),
-        extra: [placeItinerary(s)],
-        cards: tripList('related_trips', 'Similar trips')(s),
+        extra: [itinerary],
+        cards: similarTrips(s),
       }),
   },
-  {
-    key: 'home',
-    build: (s) => homeTemplate(s, { cards: tripList('featured_destinations', 'Where we go')(s) }),
-  },
-  {
-    key: 'region',
-    build: (s) => regionTemplate(s, { cards: tripList('trips', 'The trips')(s) }),
-  },
+  { key: 'home', build: (s) => homeTemplate(s) },
+  { key: 'region', build: (s) => regionTemplate(s) },
 ];
