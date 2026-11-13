@@ -32,7 +32,7 @@ export default function Carousel({
 }: CarouselProps & StudioAttributes) {
   return (
     <section
-      className={cx('container container--light container--space-normal carousel-band', className)}
+      className={cx('container container--light container--space-normal', className)}
       {...studioAttributes}
     >
       <div className="container__inner container__inner--wide">
