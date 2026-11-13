@@ -246,8 +246,11 @@ div:not(.stack, .container__inner) > :is(.badge, .heading, .text, .img, .button)
    its Condition Blocks as display: contents, so the Box's children are those;
    this styles that Box when the items are Sections laid out with a Stack (a
    Container holding a Stack, like the Trip Card). An itinerary, plain atoms
-   or a tinted panel, stays one above the other. */
-div:not(.container__inner):has(> div[style*='contents']):has(.container .stack) {
+   or a tinted panel, stays one above the other. The Box always sits in a
+   band, so the rule looks only inside one: after a save Studio renders every
+   component's wrapper as display: contents too, and the page itself (a
+   Section or template with a Carousel or Hero) must not become a grid. */
+.container__inner div:not(.container__inner):has(> div[style*='contents']):has(.container .stack) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   gap: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
