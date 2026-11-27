@@ -42,7 +42,7 @@ export const HOME = {
 };
 
 const day = (label, title, text) => ({ day: { label, title, text } });
-const quote = (text, name) => ({ quote: { quote: text, name } });
+const quote = (text, name) => ({ quote: { quote_text: text, name } });
 const photo = (key, caption) => ({ photo: { photo: key, caption } });
 
 export const DESTINATIONS = [
