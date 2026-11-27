@@ -22,6 +22,7 @@ import { resolveAuth, cma, log, run } from './lib/cma.mjs';
 import { upsertComposition, findCompositionByTitle } from './lib/composition.mjs';
 import { requireStack, COMPOSITIONS_CT, ROOT } from './lib/config.mjs';
 import { ensureProject } from './lib/studio-project.mjs';
+import { runUpgrades } from './lib/upgrades.mjs';
 import { stage1 } from './lib/stages/s1.mjs';
 import { stage2 } from './lib/stages/s2.mjs';
 import { stage3 } from './lib/stages/s3.mjs';
@@ -61,6 +62,7 @@ run(async () => {
   await resolveAuth();
   const apiKey = requireStack();
   console.log(`\n\x1b[1mCatching up: everything up to the end of ${result.label}\x1b[0m`);
+  await runUpgrades(apiKey);
 
   const projectUid = await ensureProject(apiKey, { freeform: result.freeform });
   const ctx = await loadContext(apiKey);
