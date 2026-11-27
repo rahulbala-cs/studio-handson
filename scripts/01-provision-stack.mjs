@@ -6,11 +6,14 @@
  * No Studio project: attendees create that themselves in Session 1.
  *
  * Find-or-create throughout, so re-running is safe. The repo owns these content
- * types: a re-run replaces each with its definition in content-model.mjs.
+ * types: a re-run replaces each with its definition in content-model.mjs. A
+ * stack set up by an earlier version is upgraded first (lib/upgrades.mjs), so
+ * that replacing a content type never drops a field that still holds content.
  */
 import { resolveAuth, cma, log, run, appRegionCode } from './lib/cma.mjs';
 import { CONTENT_TYPE_STEPS } from './lib/content-model.mjs';
 import { requireStack, ENVIRONMENT, BASE_URL, LOCALE, writeEnv } from './lib/config.mjs';
+import { runUpgrades } from './lib/upgrades.mjs';
 
 let apiKey;
 
@@ -152,6 +155,7 @@ async function ensureContentTypes() {
 run(async () => {
   await resolveAuth();
   apiKey = requireStack();
+  await runUpgrades(apiKey);
   const environmentUid = await ensureEnvironment();
   await enableLivePreview(environmentUid);
   const { deliveryToken, previewToken } = await ensureTokens();
