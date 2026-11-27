@@ -11,6 +11,7 @@ import https from 'node:https';
 import path from 'node:path';
 import { resolveAuth, cma, cmaOrg, orgUid, authSource, authRegion, studio } from './lib/cma.mjs';
 import { ROOT, readEnv, BASE_URL, ENVIRONMENT } from './lib/config.mjs';
+import { pendingUpgrades } from './lib/upgrades.mjs';
 
 const CDN = {
   us: 'cdn.contentstack.io',
@@ -144,6 +145,14 @@ if (signedIn && apiKey) {
         'URL patterns are off for this stack',
         'fine: Session 1 shows how to set the template URL yourself',
       );
+
+    const upgrades = await pendingUpgrades(apiKey);
+    if (upgrades.length)
+      fail(
+        `Your stack was set up by an earlier version: ${upgrades.map((u) => u.title).join('; ')}`,
+        'npm run upgrade   (it keeps your content and your Studio work)',
+      );
+    else ok('Content model is up to date');
 
     const { projects = [] } = await studio('/projects').catch(() => ({}));
     const project = projects.find((p) => p.connectedStackApiKey === apiKey);
