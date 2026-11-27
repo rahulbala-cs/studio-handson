@@ -4,6 +4,7 @@
   "private": true,
   "description": "Wayfarer: the Contentstack Studio hands-on site. Next.js, four content types, a handful of components; Studio takes over the layout in Session 1.",
   "scripts": {
+    "predev": "node scripts/upgrade.mjs --before-dev",
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
@@ -11,6 +12,7 @@
     "setup": "node scripts/setup.mjs",
     "doctor": "node scripts/doctor.mjs",
     "catchup": "node scripts/catchup.mjs",
+    "upgrade": "node scripts/upgrade.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
