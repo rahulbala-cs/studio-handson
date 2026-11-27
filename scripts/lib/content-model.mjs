@@ -124,7 +124,8 @@ const destinationSchema = (withSelfReference) => [
     {
       title: 'Quote',
       uid: 'quote',
-      schema: [text('quote', 'Quote', { multiline: true }), text('name', 'Name')],
+      // Not `quote`: a field with its block's uid reads, in Studio, as the whole block.
+      schema: [text('quote_text', 'Quote', { multiline: true }), text('name', 'Name')],
     },
     { title: 'Photo', uid: 'photo', schema: [file('image', 'Image'), text('caption', 'Caption')] },
   ]),

@@ -163,7 +163,7 @@ const itinerary = (sv, P) =>
           [
             box(id('quote'), 'Box', [
               container(sv, id('quote-panel'), 'Container', { tone: 'sand' }, [
-                textAtom(sv, id('quote-text'), 'Text', item('quote'), 'lead'),
+                textAtom(sv, id('quote-text'), 'Text', item('quote_text'), 'lead'),
                 textAtom(sv, id('quote-name'), 'Text', item('name'), 'small'),
               ]),
             ]),
