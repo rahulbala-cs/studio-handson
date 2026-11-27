@@ -35,7 +35,7 @@ export interface HomePage {
 
 export type ItineraryBlock =
   | { day: { label?: string; title?: string; text?: string } }
-  | { quote: { quote?: string; name?: string } }
+  | { quote: { quote_text?: string; name?: string } }
   | { photo: { image?: Asset; caption?: string } };
 
 export interface Destination extends DestinationSummary {

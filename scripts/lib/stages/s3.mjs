@@ -141,7 +141,7 @@ export function itinerary() {
             ]),
             conditionBlock(id('if-quote'), 'Quote', when.blockIs(rid, 'quote'), [
               stack(sv, id('quote'), 'Quote', { gap: 'small' }, [
-                textAtom(sv, id('quote-text'), 'Quote', item('quote'), 'lead'),
+                textAtom(sv, id('quote-text'), 'Quote', item('quote_text'), 'lead'),
                 textAtom(sv, id('quote-name'), 'Name', item('name'), 'small'),
               ]),
             ]),

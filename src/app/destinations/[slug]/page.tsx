@@ -55,7 +55,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
             if ('quote' in block)
               return (
                 <Stack gap="small" key={i}>
-                  <Text text={`“${block.quote.quote}”`} variant="lead" />
+                  <Text text={`“${block.quote.quote_text}”`} variant="lead" />
                   <Text text={block.quote.name} variant="small" />
                 </Stack>
               );
